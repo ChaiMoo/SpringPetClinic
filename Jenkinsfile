@@ -1,25 +1,33 @@
 pipeline {
     agent any
-
+    environment {
+        SONARQUBE_URL = 'http://localhost:9000' // Replace with your SonarQube server's URL
+        SONARQUBE_TOKEN = credentials('token') // Replace 'sonar-token' with your Jenkins credential ID
+    }
     stages {
         stage('Checkout Code') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'master']],
-                          userRemoteConfigs: [[url: 'https://github.com/ChaiMoo/SpringPetClinic.git']]])
+                checkout scm
             }
         }
-        stage('SonarQube Analysis') {
+        stage('Static Code Analysis with SonarQube') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Use the SonarQube configuration name
-                    sh '''
-                    sonar-scanner \
-                    -Dsonar.projectKey=SpringPetClinic \
-                    -Dsonar.sources=src \
-                    -Dsonar.host.url=http://<sonarqube_server_ip>:9000 \
-                    -Dsonar.login=<sonar_token>
-                    '''
+                withSonarQubeEnv('Sonarqube') { // Replace 'SonarQube' with your SonarQube server configuration name
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=SpringPetClinic \
+                        -Dsonar.sources=src \
+                        -Dsonar.java.binaries=target/classes \
+                        -Dsonar.host.url=$SONARQUBE_URL \
+                        -Dsonar.login=$SONARQUBE_TOKEN
+                    """
                 }
             }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline execution completed!'
         }
     }
 }
