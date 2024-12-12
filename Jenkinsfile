@@ -39,14 +39,24 @@ pipeline {
             }
         }
 
+        stage('Functional Tests with Robot Framework') {
+            steps {
+                script {
+                    // Run functional tests with Robot Framework
+                    sh 'robot tests/functional/FindOwners.robot'  // Replace with your actual test file paths
+                    sh 'robot tests/functional/VeterinariansList.robot'  // Replace with your actual test file paths
+                }
+            }
+        }
+
     }
 
     post {
         success {
-            echo 'SonarQube analysis succeeded!'
+            echo 'SonarQube analysis and tests succeeded!'
         }
         failure {
-            echo 'SonarQube analysis failed!'
+            echo 'SonarQube analysis or tests failed!'
         }
     }
 }
