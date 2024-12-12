@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_URL = 'http://localhost:9000'
-        SONARQUBE_AUTH_TOKEN = 'sqp_0745c2e60c1bedf533a3ffa5be1ced7dbd89f4cf'
-        SONAR_PROJECT_KEY = 'exercice'
-        MAVEN_HOME = '/opt/maven'  // Ensure this points to your Maven installation if needed
-        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+        SONARQUBE = 'SonarQube' // This is the SonarQube server name from Jenkins configuration
+        SONAR_HOST_URL = 'http://your_sonarqube_server_url'
+        SONAR_PROJECT_KEY = 'SpringPetClinic'
     }
 
     stages {
@@ -16,35 +14,24 @@ pipeline {
             }
         }
 
-        stage('Build with Maven') {
-            steps {
-                // Ensure the Maven wrapper has executable permissions
-                sh 'chmod +x ./mvnw'
-
-                // Use the Maven Wrapper to build the project
-                sh './mvnw clean install'  // Run Maven build command
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
-                // Run SonarQube analysis after the build
-                sh """
-                ./mvnw clean verify sonar:sonar \
-                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                  -Dsonar.host.url=${SONARQUBE_URL} \
-                  -Dsonar.login=${SONARQUBE_AUTH_TOKEN}
-                """
+                script {
+                    // Run SonarQube analysis using Maven
+                    sh './mvnw sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL}'
+                }
             }
         }
-    }
 
-    post {
-        success {
-            echo 'SonarQube analysis succeeded!'
+        stage('Build and Unit Tests') {
+            steps {
+                script {
+                    // Clean, compile, and run unit tests with Maven
+                    sh './mvnw clean install'
+                }
+            }
         }
-        failure {
-            echo 'SonarQube analysis failed!'
-        }
+
+        // Next steps can be added here like functional tests, reports, and notifications
     }
 }
