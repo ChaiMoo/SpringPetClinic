@@ -8,7 +8,9 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh './mvnw clean install'  // Maven build command
+                // Ensure the Maven wrapper has executable permissions
+                sh 'chmod +x ./mvnw'
+                sh './mvnw clean install'  // Run Maven build command
             }
         }
     }
