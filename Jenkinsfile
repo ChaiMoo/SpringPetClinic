@@ -18,6 +18,8 @@ pipeline {
             steps {
                 script {
                     // Run SonarQube analysis using Maven
+                    // Ensure the mvnw script has execute permissions
+                    sh 'chmod +x ./mvnw'
                     sh './mvnw sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL}'
                 }
             }
@@ -27,11 +29,13 @@ pipeline {
             steps {
                 script {
                     // Clean, compile, and run unit tests with Maven
+                    // Ensure the mvnw script has execute permissions
+                    sh 'chmod +x ./mvnw'
                     sh './mvnw clean install'
                 }
             }
         }
 
-        // Next steps can be added here like functional tests, reports, and notifications
+        // You can add more stages here for additional steps like functional tests, reports, and notifications
     }
 }
