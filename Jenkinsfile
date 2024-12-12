@@ -12,7 +12,7 @@ pipeline {
         }
         stage('Static Code Analysis with SonarQube') {
             steps {
-                withSonarQubeEnv('Sonarqube') { // Replace 'SonarQube' with your SonarQube server configuration name
+                withSonarQubeEnv('SonarQube') { // Replace 'SonarQube' with your SonarQube server configuration name
                     sh """
                         sonar-scanner \
                         -Dsonar.projectKey=SpringPetClinic \
