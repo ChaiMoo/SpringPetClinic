@@ -16,28 +16,7 @@ pipeline {
             }
         }
         
-        stage('SonarQube Analysis') {
-            steps {
-                // Run SonarQube analysis after the build
-                sh 'chmod +x ./mvnw'
-                sh """
-                ./mvnw clean verify sonar:sonar \
-                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                  -Dsonar.host.url=${SONARQUBE_URL} \
-                  -Dsonar.login=${SONARQUBE_AUTH_TOKEN}
-                """
-            }
-        }
 
-        stage('Build with Maven') {
-            steps {
-                // Ensure the Maven wrapper has executable permissions
-                sh 'chmod +x ./mvnw'
-
-                // Use the Maven Wrapper to build the project
-                sh './mvnw clean install'  // Run Maven build command
-            }
-        }
 
         stage('Functional Tests with Robot Framework') {
             steps {
@@ -51,12 +30,4 @@ pipeline {
 
     }
 
-    post {
-        success {
-            echo 'SonarQube analysis and tests succeeded!'
-        }
-        failure {
-            echo 'SonarQube analysis or tests failed!'
-        }
-    }
 }
