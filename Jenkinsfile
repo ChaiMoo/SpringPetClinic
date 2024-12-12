@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        // Set the SonarQube environment variables
         SONARQUBE_URL = 'http://localhost:9000'
         SONARQUBE_AUTH_TOKEN = 'sqp_0745c2e60c1bedf533a3ffa5be1ced7dbd89f4cf'
         SONAR_PROJECT_KEY = 'exercice'
+        MAVEN_HOME = '/opt/maven'  // Ensure this points to your Maven installation if needed
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -21,8 +22,7 @@ pipeline {
                 sh 'chmod +x ./mvnw'
 
                 // Use the Maven Wrapper to build the project
-                sh './mvnw clean install'  // If you're using Maven Wrapper
-                // sh 'mvn clean install'  // If Maven is installed globally
+                sh './mvnw clean install'  // Run Maven build command
             }
         }
 
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 // Run SonarQube analysis after the build
                 sh """
-                mvn clean verify sonar:sonar \
+                ./mvnw clean verify sonar:sonar \
                   -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                   -Dsonar.host.url=${SONARQUBE_URL} \
                   -Dsonar.login=${SONARQUBE_AUTH_TOKEN}
