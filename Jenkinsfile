@@ -15,6 +15,19 @@ pipeline {
                 git 'https://github.com/karoumbr/SpringPetClinic.git'
             }
         }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                // Run SonarQube analysis after the build
+                sh 'chmod +x ./mvnw'
+                sh """
+                ./mvnw clean verify sonar:sonar \
+                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                  -Dsonar.host.url=${SONARQUBE_URL} \
+                  -Dsonar.login=${SONARQUBE_AUTH_TOKEN}
+                """
+            }
+        }
 
         stage('Build with Maven') {
             steps {
@@ -26,17 +39,6 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                // Run SonarQube analysis after the build
-                sh """
-                ./mvnw clean verify sonar:sonar \
-                  -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                  -Dsonar.host.url=${SONARQUBE_URL} \
-                  -Dsonar.login=${SONARQUBE_AUTH_TOKEN}
-                """
-            }
-        }
     }
 
     post {
