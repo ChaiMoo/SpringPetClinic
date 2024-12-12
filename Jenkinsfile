@@ -17,7 +17,10 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                // Use the Maven Wrapper if available
+                // Ensure the Maven wrapper has executable permissions
+                sh 'chmod +x ./mvnw'
+
+                // Use the Maven Wrapper to build the project
                 sh './mvnw clean install'  // If you're using Maven Wrapper
                 // sh 'mvn clean install'  // If Maven is installed globally
             }
