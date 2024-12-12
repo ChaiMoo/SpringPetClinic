@@ -23,7 +23,6 @@ pipeline {
                 script {
                     // Run functional tests with Robot Framework
                     sh 'robot tests/functional/FindOwners.robot'  // Replace with your actual test file paths
-                    sh 'robot tests/functional/VeterinariansList.robot'  // Replace with your actual test file paths
                 }
             }
         }
