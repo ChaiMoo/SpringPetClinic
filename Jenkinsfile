@@ -1,13 +1,22 @@
 pipeline {
     agent any
+    environment {
+        MAVEN_HOME = tool name: 'Maven 3', type: 'Tool'  // Specify the Maven tool you configured
+    }
     stages {
-        stage('Verify Environment') {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/ChaiMoo/SpringPetClinic.git'
+            }
+        }
+        stage('Build with Maven') {
             steps {
                 script {
-                    sh 'echo $SONAR_SCANNER_HOME'
-                    sh 'echo $PATH'
+                    // Compile the project with Maven
+                    sh "'${MAVEN_HOME}/bin/mvn' clean install"
                 }
             }
         }
     }
 }
+
